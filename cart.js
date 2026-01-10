@@ -79,14 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const tr = document.createElement('tr');
       tr.classList.add('cart-item-row');
       tr.innerHTML = `
-        <td class="cart-item-prod">
+        <td class="cart-item-prod" data-label="Product">
             <img src="${item.image}" alt="${item.name}" />
             <span>${item.name}</span>
         </td>
-        <td>₹${item.price}</td>
-        <td>${item.quantity}</td>
-        <td>₹${item.price * item.quantity}</td>
-        <td><button class="remove-from-cart" data-id="${item.id}">&times;</button></td>
+        <td data-label="Price">₹${item.price}</td>
+        <td data-label="Quantity">${item.quantity}</td>
+        <td data-label="Total">₹${item.price * item.quantity}</td>
+        <td data-label="Remove"><button class="remove-from-cart" data-id="${item.id}">&times;</button></td>
       `;
       tbody.appendChild(tr);
     });
