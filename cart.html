@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cart | Phoolishh Loveee</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="navbar">
+    <h1>🌸 Phoolishh Loveee</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="index.html#products">Products</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#contact">Contact</a>
+      <a href="cart.html" id="cart-link">🛒 Cart (<span id="cart-count">0</span>)</a>
+    </nav>
+  </header>
+
+  <main class="cart-page-container">
+    <section class="cart-section">
+      <h2>Your Cart</h2>
+      <div id="cart-items">
+        <!-- Items will be injected by JavaScript -->
+      </div>
+      <div class="cart-summary">
+        <p>Total: <span id="cart-total">₹0.00</span></p>
+      </div>
+    </section>
+
+    <section class="payment-section hidden">
+      <h2>Payment</h2>
+      <div class="payment-options">
+        <button class="payment-option-btn active" data-payment="card">Credit/Debit Card</button>
+        <button class="payment-option-btn" data-payment="netbanking">Netbanking</button>
+        <button class="payment-option-btn" data-payment="upi">UPI</button>
+      </div>
+
+      <form id="card-payment-form" class="payment-form">
+        <input type="text" placeholder="Name on Card" required />
+        <input type="text" placeholder="Card Number" required />
+        <input type="text" placeholder="Expiry (MM/YY)" required />
+        <input type="text" placeholder="CVV" required />
+        <button type="submit" class="btn">Pay Now</button>
+      </form>
+      
+      <div id="netbanking-payment-form" class="payment-form hidden">
+        <select>
+            <option>Select your bank</option>
+            <option>State Bank of India</option>
+            <option>HDFC Bank</option>
+            <option>ICICI Bank</option>
+            <option>Axis Bank</option>
+        </select>
+        <button type="submit" class="btn">Pay Now</button>
+      </div>
+
+      <div id="upi-payment-form" class="payment-form hidden">
+        <input type="text" placeholder="Enter your UPI ID" required />
+        <button type="submit" class="btn">Pay Now</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 Phoolishh Loveee | Made with 💖</p>
+  </footer>
+
+  <script src="cart.js"></script>
+</body>
+</html>

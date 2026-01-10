@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phoolishh Loveee | Pipe Cleaner Art</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="navbar">
+    <h1>🌸 Phoolishh Loveee</h1>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#products">Products</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a href="cart.html" id="cart-link">🛒 Cart (<span id="cart-count">0</span>)</a>
+    </nav>
+  </header>
+
+  <section id="home" class="hero">
+    <h2>Handmade Pipe Cleaner Art</h2>
+    <p>Cute, colorful & crafted with love 💕</p>
+    <a class="btn" href="#products">Shop Now</a>
+  </section>
+
+  <section id="products" class="products">
+    <h2>Our Creations</h2>
+    <div class="grid">
+      <div class="card" data-id="1" data-name="Pink Flower" data-price="199" data-image="assets/p1.jpeg">
+        <div class="image-container">
+          <img src="assets/p1.jpeg" alt="Pipe Cleaner Art 1" />
+        </div>
+        <div class="product-info">
+          <p class="product-name">Pink Flower</p>
+          <p class="price">₹199</p>
+          <button class="btn add-to-cart">Add to Cart</button>
+        </div>
+      </div>
+      <div class="card" data-id="2" data-name="Bear Keychain" data-price="249" data-image="assets/p2.jpeg">
+        <div class="image-container">
+          <img src="assets/p2.jpeg" alt="Pipe Cleaner Art 2" />
+        </div>
+        <div class="product-info">
+          <p class="product-name">Bear Keychain</p>
+          <p class="price">₹249</p>
+          <button class="btn add-to-cart">Add to Cart</button>
+        </div>
+      </div>
+      <div class="card" data-id="3" data-name="Flower Bouquet" data-price="299" data-image="assets/p3.jpeg">
+        <div class="image-container">
+          <img src="assets/p3.jpeg" alt="Pipe Cleaner Art 3" />
+        </div>
+        <div class="product-info">
+          <p class="product-name">Flower Bouquet</p>
+          <p class="price">₹299</p>
+          <button class="btn add-to-cart">Add to Cart</button>
+        </div>
+      </div>
+      <div class="card" data-id="4" data-name="Custom Gift" data-price="349" data-image="assets/p5.jpeg">
+        <div class="image-container">
+          <img src="assets/p5.jpeg" alt="Pipe Cleaner Art 5" />
+        </div>
+        <div class="product-info">
+          <p class="product-name">Custom Gift</p>
+          <p class="price">₹349</p>
+          <button class="btn add-to-cart">Add to Cart</button>
+        </div>
+      </div>
+      <div class="card" data-id="5" data-name="Colorful Tulips" data-price="399" data-image="assets/p6.jpeg">
+        <div class="image-container">
+          <img src="assets/p6.jpeg" alt="Pipe Cleaner Art 6" />
+        </div>
+        <div class="product-info">
+          <p class="product-name">Colorful Tulips</p>
+          <p class="price">₹399</p>
+          <button class="btn add-to-cart">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="about">
+    <h2>About Us</h2>
+    <p>
+      Phoolishh Loveee creates adorable handmade pipe cleaner art pieces,
+      perfect for gifts, decor, and smiles 😊
+    </p>
+  </section>
+
+  <section id="contact" class="contact">
+    <h2>Contact & Orders</h2>
+    <p>DM us on Instagram or message us on WhatsApp to place an order 💌</p>
+    <div class="contact-buttons">
+      <a class="btn" href="https://www.instagram.com/phoolishh_loveee" target="_blank">
+        DM on Instagram
+      </a>
+      <a class="btn whatsapp" href="https://wa.me/910000000000" target="_blank">
+        WhatsApp
+      </a>
+    </div>
+  </section>
+
+  <section id="cart" class="cart-section hidden">
+    <h2>Your Cart</h2>
+    <div id="cart-items"></div>
+    <div class="cart-summary">
+      <p>Total: <span id="cart-total">₹0</span></p>
+      <button id="checkout-btn" class="btn">Checkout</button>
+    </div>
+  </section>
+
+  <section id="payment" class="payment-section hidden">
+    <h2>Checkout</h2>
+    <form id="payment-form">
+      <input type="text" placeholder="Name on Card" required />
+      <input type="text" placeholder="Card Number" required />
+      <input type="text" placeholder="Expiry (MM/YY)" required />
+      <input type="text" placeholder="CVV" required />
+      <button type="submit" class="btn">Pay Now</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>© 2026 Phoolishh Loveee | Made with 💖</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
