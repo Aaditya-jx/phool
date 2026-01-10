@@ -184,6 +184,26 @@ body {
   font-size: 1.2rem;
   font-weight: bold;
   color: #ff6fae;
+  margin-bottom: 0.75rem;
+}
+.product-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+.add-to-cart {
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+.product-actions .btn-secondary {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+.card:hover .product-actions .btn-secondary {
+  opacity: 1;
+  transform: translateY(0);
 }
 .contact-buttons {
   display: flex;
@@ -452,6 +472,30 @@ footer {
   }
   .hamburger.active span:nth-child(3) {
     transform: rotate(-45deg) translate(7px, -7px);
+  }
+
+  /* --- Mobile Card Adjustments --- */
+  .card:hover {
+    transform: none;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  }
+  .card:hover img {
+    transform: none;
+  }
+  .card .card-overlay {
+    display: none;
+  }
+  .product-actions {
+    flex-direction: row;
+  }
+  .product-actions .btn {
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 0.6rem;
+  }
+  .product-actions .btn-secondary {
+    opacity: 1;
+    transform: none;
   }
 }
 
