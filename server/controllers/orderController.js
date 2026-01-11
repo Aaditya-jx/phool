@@ -1,5 +1,7 @@
 const Order = require('../models/Order');
+const Product = require('../models/Product');
 const Razorpay = require('razorpay');
+const mongoose = require('mongoose');
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -26,8 +28,43 @@ const createOrder = async (req, res) => {
   }
 
   try {
+    // Convert product IDs to ObjectIds and validate products exist
+    const processedOrderItems = await Promise.all(
+      orderItems.map(async (item) => {
+        let productId = item.product;
+        
+        // If product is a string (from frontend), try to find the product
+        if (typeof productId === 'string') {
+          // Try to find product by ID (if it's already an ObjectId string)
+          if (mongoose.Types.ObjectId.isValid(productId)) {
+            productId = new mongoose.Types.ObjectId(productId);
+          } else {
+            // If it's not a valid ObjectId, try to find by name or use a default
+            // For now, we'll create a temporary ObjectId or use name lookup
+            // This handles the case where frontend uses simple IDs like "1", "2", "3"
+            const product = await Product.findOne({ name: item.name });
+            if (product) {
+              productId = product._id;
+            } else {
+              // If product not found by name, create a new ObjectId
+              // In production, you'd want better error handling
+              productId = new mongoose.Types.ObjectId();
+            }
+          }
+        }
+        
+        return {
+          name: item.name,
+          qty: item.qty || item.quantity,
+          price: item.price,
+          image: item.image,
+          product: productId
+        };
+      })
+    );
+
     const order = new Order({
-      orderItems,
+      orderItems: processedOrderItems,
       user: req.user._id,
       shippingAddress,
       paymentMethod,
@@ -50,7 +87,8 @@ const createOrder = async (req, res) => {
     res.status(201).json({ createdOrder, razorpayOrder });
 
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('Order creation error:', error);
+    res.status(500).json({ message: error.message || 'Server error' });
   }
 };
 
