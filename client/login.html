@@ -88,7 +88,20 @@
       </form>
       <div class="auth-links">
         <p>Don't have an account? <a href="register.html">Register here</a></p>
+        <p><a href="#" id="forgot-password-link">Forgot Password?</a></p>
         <p><a href="index.html">← Back to Home</a></p>
+      </div>
+      <!-- Forgot Password Modal -->
+      <div id="forgot-password-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); align-items:center; justify-content:center; z-index:1000;">
+        <div style="background:white; padding:2rem; border-radius:12px; max-width:350px; margin:auto; box-shadow:0 4px 20px rgba(0,0,0,0.2);">
+          <h3 style="color:#ff6fae; text-align:center;">Reset Password</h3>
+          <form id="forgot-password-form">
+            <input type="email" id="forgot-email" placeholder="Enter your email" required style="width:100%; padding:0.75rem; margin-bottom:1rem; border:2px solid #ffb6d5; border-radius:8px;" />
+            <button type="submit" class="btn" style="width:100%;">Send Reset Link</button>
+            <div id="forgot-password-message" style="margin-top:1rem; color:#c33;"></div>
+          </form>
+          <button id="close-forgot-modal" style="margin-top:1rem; width:100%; background:#eee; color:#333; border:none; border-radius:8px; padding:0.5rem;">Cancel</button>
+        </div>
       </div>
     </div>
   </main>
@@ -104,17 +117,51 @@
       e.preventDefault();
       const errorDiv = document.getElementById('auth-error');
       errorDiv.classList.remove('show');
-      
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      
       const result = await loginUser(email, password);
-      
       if (result.success) {
         window.location.href = 'index.html';
       } else {
         errorDiv.textContent = result.error || 'Login failed. Please try again.';
         errorDiv.classList.add('show');
+      }
+    });
+
+    // Forgot Password Modal Logic
+    const forgotLink = document.getElementById('forgot-password-link');
+    const forgotModal = document.getElementById('forgot-password-modal');
+    const closeForgotModal = document.getElementById('close-forgot-modal');
+    forgotLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      forgotModal.style.display = 'flex';
+    });
+    closeForgotModal.addEventListener('click', () => {
+      forgotModal.style.display = 'none';
+      document.getElementById('forgot-password-message').textContent = '';
+    });
+    document.getElementById('forgot-password-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('forgot-email').value;
+      const msgDiv = document.getElementById('forgot-password-message');
+      msgDiv.textContent = '';
+      try {
+        const res = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          msgDiv.style.color = '#2d8a34';
+          msgDiv.textContent = 'Reset link sent! Check your email.';
+        } else {
+          msgDiv.style.color = '#c33';
+          msgDiv.textContent = data.message || 'Error sending reset link.';
+        }
+      } catch (err) {
+        msgDiv.style.color = '#c33';
+        msgDiv.textContent = 'Server error.';
       }
     });
   </script>
