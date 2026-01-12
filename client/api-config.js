@@ -1,6 +1,6 @@
 // API Configuration
 const API_CONFIG = {
-  baseURL: 'http://localhost:5000/api',
+  baseURL: '/api',
   endpoints: {
     products: '/products',
     cart: '/cart',
