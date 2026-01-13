@@ -83,18 +83,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function attachCartListeners() {
-    if (grid) {
+  if (grid) {
       // Event delegation - works for both hardcoded and dynamically added products
-      grid.addEventListener('click', (e) => {
-        if (e.target.classList.contains('add-to-cart')) {
-          const card = e.target.closest('.card');
-          const id = card.dataset.id;
-          const name = card.dataset.name;
-          const price = parseInt(card.dataset.price, 10);
-          const image = card.dataset.image;
-          addToCart({ id, name, price, image });
-        }
-      });
+    grid.addEventListener('click', (e) => {
+      if (e.target.classList.contains('add-to-cart')) {
+        const card = e.target.closest('.card');
+        const id = card.dataset.id;
+        const name = card.dataset.name;
+        const price = parseInt(card.dataset.price, 10);
+        const image = card.dataset.image;
+        addToCart({ id, name, price, image });
+      }
+    });
     }
   }
 

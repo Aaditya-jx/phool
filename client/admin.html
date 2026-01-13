@@ -22,13 +22,75 @@
     </header>
 
     <main class="admin-page-container">
+        <section class="dashboard-summary">
+            <h2>Dashboard</h2>
+            <div class="summary-cards">
+                <div class="card">
+                    <h3>Total Revenue</h3>
+                    <p id="total-revenue">₹0</p>
+                </div>
+                <div class="card">
+                    <h3>Total Orders</h3>
+                    <p id="total-orders">0</p>
+                </div>
+                <div class="card">
+                    <h3>Total Customers</h3>
+                    <p id="total-customers">0</p>
+                </div>
+            </div>
+        </section>
+
         <section class="orders-section">
             <h2>All Orders</h2>
+            <div class="order-controls">
+                <input type="text" id="search-input" placeholder="Search by name, ID, or status..." />
+                <select id="filter-status">
+                    <option value="">All Statuses</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Not Paid">Not Paid</option>
+                </select>
+            </div>
             <div id="orders-list">
                 <!-- Orders will be injected by JavaScript -->
             </div>
         </section>
+
+        <section class="recent-orders-section">
+            <h2>Recent Orders</h2>
+            <div id="recent-orders-list">
+                <!-- Recent orders will be injected by JavaScript -->
+            </div>
+        </section>
     </main>
+
+    <!-- Update Status Modal -->
+    <div id="status-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="close-modal-btn" onclick="closeUpdateStatusModal()">&times;</button>
+            <h2>Update Order Status</h2>
+            <p><strong>Order ID:</strong> <span id="modal-order-id"></span></p>
+            <form id="update-status-form">
+                <div class="form-group">
+                    <label for="modal-is-paid">Payment Status</label>
+                    <select id="modal-is-paid">
+                        <option value="true">Paid</option>
+                        <option value="false">Not Paid</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="modal-is-delivered">Delivery Status</label>
+                    <select id="modal-is-delivered">
+                        <option value="true">Delivered</option>
+                        <option value="false">Not Delivered</option>
+                    </select>
+                </div>
+                <p id="modal-error" class="error-message" style="display: none;"></p>
+                <button type="submit" class="btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
 
     <footer>
         <p>© 2026 Phoolishh Loveee | Made with 💖</p>

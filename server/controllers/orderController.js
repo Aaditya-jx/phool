@@ -162,7 +162,34 @@ const getOrders = async (req, res) => {
     const orders = await Order.find({}).populate('user', 'id name');
     res.json(orders);
   } catch (error) {
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// @desc    Update order status
+// @route   PUT /api/orders/:id/status
+// @access  Private/Admin
+const updateOrderStatus = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+      order.isPaid = req.body.isPaid === true || order.isPaid;
+      if(order.isPaid && !order.paidAt) {
+          order.paidAt = Date.now();
+      }
+      order.isDelivered = req.body.isDelivered === true || order.isDelivered;
+      if(order.isDelivered && !order.deliveredAt) {
+          order.deliveredAt = Date.now();
+      }
+
+      const updatedOrder = await order.save();
+      res.json(updatedOrder);
+    } else {
+      res.status(404).json({ message: 'Order not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -172,4 +199,5 @@ module.exports = {
   updateOrderToPaid,
   getMyOrders,
   getOrders,
+  updateOrderStatus,
 };

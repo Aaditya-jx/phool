@@ -735,4 +735,197 @@ footer {
   color: #555;
 }
 
+/* Admin Page Specific Styles */
+.admin-page-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.dashboard-summary {
+    margin-bottom: 2rem;
+}
+
+.dashboard-summary h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.summary-cards .card {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.summary-cards .card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.summary-cards .card p {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ff6fae;
+}
+
+.order-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.order-controls input,
+.order-controls select {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    flex-grow: 1;
+}
+
+.orders-section h2, .recent-orders-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.orders-table, .recent-orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+    overflow: hidden;
+}
+
+.orders-table th, .orders-table td,
+.recent-orders-table th, .recent-orders-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.orders-table th, .recent-orders-table th {
+    background: #fcfcfc;
+    font-weight: 600;
+}
+
+.orders-table ul, .recent-orders-table ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.orders-table ul li, .recent-orders-table ul li {
+    margin-bottom: 0.25rem;
+}
+
+@media (max-width: 768px) {
+    .orders-table, .recent-orders-table {
+        display: block;
+        width: 100%;
+    }
+
+    .orders-table thead, .recent-orders-table thead {
+        display: none;
+    }
+
+    .orders-table tbody, .recent-orders-table tbody,
+    .orders-table tr, .recent-orders-table tr {
+        display: block;
+        width: 100%;
+    }
+
+    .orders-table tr, .recent-orders-table tr {
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        border: 1px solid #eee;
+        overflow: hidden;
+    }
+
+    .orders-table td, .recent-orders-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: right;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px dotted #eee;
+    }
+
+    .orders-table td::before, .recent-orders-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        text-align: left;
+        margin-right: 1rem;
+    }
+}
+
+/* Status Badge Styles */
+.status-paid, .status-delivered, .status-unpaid {
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+}
+
+.status-paid {
+    background-color: #28a745; /* Green */
+}
+
+.status-delivered {
+    background-color: #17a2b8; /* Blue */
+}
+
+.status-unpaid {
+    background-color: #dc3545; /* Red */
+}
+
+/* Update Status Modal Styles */
+.modal-overlay {
+    /* Existing styles */
+    z-index: 3000; /* Ensure it's on top */
+}
+
+.modal-content {
+    /* Existing styles */
+    text-align: left;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#update-status-form .form-group {
+    margin-bottom: 1rem;
+}
+
+#update-status-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+#update-status-form select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
 
