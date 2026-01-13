@@ -197,6 +197,13 @@
           e.preventDefault();
           logoutUser();
         });
+
+        if (user.isAdmin) {
+          const adminLink = document.createElement('a');
+          adminLink.href = 'admin.html';
+          adminLink.textContent = 'Admin';
+          userLinks.prepend(adminLink);
+        }
       } else {
         authLinks.style.display = 'inline';
         userLinks.style.display = 'none';

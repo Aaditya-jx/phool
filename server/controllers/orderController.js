@@ -154,9 +154,22 @@ const getMyOrders = async (req, res) => {
   }
 };
 
+// @desc    Get all orders
+// @route   GET /api/orders
+// @access  Private/Admin
+const getOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({}).populate('user', 'id name');
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
 module.exports = {
   createOrder,
   getOrderById,
   updateOrderToPaid,
   getMyOrders,
+  getOrders,
 };

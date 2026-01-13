@@ -1,12 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
   let cart = [];
+  let shippingAddress = {};
   const cartCount = document.getElementById('cart-count');
   const cartItems = document.getElementById('cart-items');
   const cartTotal = document.getElementById('cart-total');
+  const cartSection = document.querySelector('.cart-section');
+  const cartSummary = document.querySelector('.cart-summary');
+
+  // Shipping elements
+  const shippingSection = document.querySelector('.shipping-section');
+  const shippingForm = document.getElementById('shipping-form');
+  const continueToPaymentBtn = document.getElementById('continue-to-payment-btn');
 
   // Payment elements
   const paymentSection = document.querySelector('.payment-section');
   const checkoutBtn = document.getElementById('checkout-btn');
+  const backToShippingBtn = document.getElementById('back-to-cart-btn');
 
   // Progress bar elements
   const progressSteps = document.querySelectorAll('.progress-step');
@@ -39,8 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
       cart.splice(productIndex, 1);
     }
     updateCart();
-    
-    // Optionally remove from backend
     await removeFromBackendCart(id);
   }
   
@@ -53,27 +60,18 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCartItems();
     renderCartSummary();
     localStorage.setItem('cart', JSON.stringify(cart));
-    
-    // Optionally sync with backend if user is authenticated
     syncCartToBackend();
   }
 
   async function syncCartToBackend() {
     const token = localStorage.getItem('authToken');
-    if (!token) {
-      // User not authenticated, skip backend sync
-      return;
-    }
+    if (!token) return;
 
     try {
-      // Sync cart to backend
       for (const item of cart) {
         await apiRequest(getAPIUrl(API_CONFIG.endpoints.cart), {
           method: 'POST',
-          body: {
-            productId: item.id,
-            quantity: item.quantity
-          }
+          body: { productId: item.id, quantity: item.quantity }
         });
       }
     } catch (error) {
@@ -83,9 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function removeFromBackendCart(productId) {
     const token = localStorage.getItem('authToken');
-    if (!token) {
-      return;
-    }
+    if (!token) return;
 
     try {
       await apiRequest(getAPIUrl(`${API_CONFIG.endpoints.cart}/${productId}`), {
@@ -100,17 +96,16 @@ document.addEventListener('DOMContentLoaded', () => {
     cartItems.innerHTML = '';
     if (cart.length === 0) {
       cartItems.innerHTML = '<div class="empty-cart-message">Your cart is empty. <a href="index.html#products">Continue Shopping</a></div>';
-      if (paymentSection) {
-        paymentSection.classList.add('hidden');
-      }
+      shippingSection.classList.add('hidden');
+      paymentSection.classList.add('hidden');
+      const shippingBtn = document.getElementById('proceed-to-shipping-btn');
+      if(shippingBtn) shippingBtn.style.display = 'none';
       updateProgressBar(1);
       return;
     }
-    
-    if (paymentSection) {
-      paymentSection.classList.remove('hidden');
-    }
-    updateProgressBar(2);
+
+    const shippingBtn = document.getElementById('proceed-to-shipping-btn');
+    if(shippingBtn) shippingBtn.style.display = 'block';
 
     const table = document.createElement('table');
     table.innerHTML = `
@@ -151,26 +146,32 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cartCount) {
         cartCount.textContent = cart.reduce((acc, item) => acc + item.quantity, 0);
     }
+    // Add proceed to shipping button if it doesn't exist
+    if (!document.getElementById('proceed-to-shipping-btn') && cart.length > 0) {
+      const proceedToShippingBtn = document.createElement('button');
+      proceedToShippingBtn.id = 'proceed-to-shipping-btn';
+      proceedToShippingBtn.className = 'btn';
+      proceedToShippingBtn.textContent = 'Proceed to Shipping';
+      cartSummary.appendChild(proceedToShippingBtn);
+
+      proceedToShippingBtn.addEventListener('click', () => {
+        cartSection.classList.add('hidden');
+        shippingSection.classList.remove('hidden');
+        updateProgressBar(2);
+      });
+    }
   }
 
-  // --- Progress Bar Functions ---
   function updateProgressBar(currentStep) {
     progressSteps.forEach(step => {
       const stepNumber = parseInt(step.dataset.step, 10);
-      if (stepNumber === currentStep) {
-        step.classList.add('active');
-      } else {
-        step.classList.remove('active');
-      }
+      step.classList.toggle('active', stepNumber <= currentStep);
     });
   }
 
-  // --- Payment Functions ---
-  
   async function handleCheckout(e) {
     e.preventDefault();
     
-    // Check if user is logged in
     const token = localStorage.getItem('authToken');
     if (!token) {
       alert('Please login to proceed with payment');
@@ -178,22 +179,16 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Get total amount
     const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    
     if (total <= 0 || cart.length === 0) {
       alert('Cart is empty!');
       return;
     }
 
-    // Disable button during processing
-    if (checkoutBtn) {
-      checkoutBtn.disabled = true;
-      checkoutBtn.textContent = 'Processing...';
-    }
+    checkoutBtn.disabled = true;
+    checkoutBtn.textContent = 'Processing...';
 
     try {
-      // Create order on backend
       const orderData = {
         orderItems: cart.map(item => ({
           name: item.name,
@@ -202,12 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
           image: item.image,
           product: item.id
         })),
-        shippingAddress: {
-          address: 'Sample Address',
-          city: 'City',
-          postalCode: '123456',
-          country: 'India'
-        },
+        shippingAddress: shippingAddress,
         paymentMethod: 'razorpay',
         itemsPrice: total,
         taxPrice: 0,
@@ -215,31 +205,25 @@ document.addEventListener('DOMContentLoaded', () => {
         totalPrice: total
       };
 
-      // Create order and get Razorpay order
       const response = await apiRequest(getAPIUrl(API_CONFIG.endpoints.orders), {
         method: 'POST',
         body: orderData
       });
 
       const { createdOrder, razorpayOrder } = response;
-
-      // Get user info
       const user = getCurrentUser();
       const userName = user ? user.name : 'Customer';
       const userEmail = user ? user.email : 'customer@example.com';
 
-      // Razorpay options - using your test key
       const options = {
-        key: 'rzp_test_S2UwgGjTCRAvqY', // Your Razorpay test key
-        amount: razorpayOrder.amount, // Amount in paise
+        key: 'rzp_test_S2UwgGjTCRAvqY',
+        amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
         name: 'Phoolishh Loveee',
         description: 'Order Payment',
         order_id: razorpayOrder.id,
         handler: async function(response) {
-          // Payment success
           try {
-            // Update order as paid
             await apiRequest(getAPIUrl(`${API_CONFIG.endpoints.orders}/${createdOrder._id}/pay`), {
               method: 'PUT',
               body: {
@@ -250,10 +234,12 @@ document.addEventListener('DOMContentLoaded', () => {
               }
             });
 
-            // Show success message
             confirmationModal.classList.remove('hidden');
             updateProgressBar(3);
             clearCart();
+            cartSection.classList.remove('hidden');
+            shippingSection.classList.add('hidden');
+            paymentSection.classList.add('hidden');
           } catch (error) {
             console.error('Payment verification error:', error);
             alert('Payment successful but verification failed. Please contact support.');
@@ -262,39 +248,32 @@ document.addEventListener('DOMContentLoaded', () => {
         prefill: {
           name: userName,
           email: userEmail,
-          contact: '9999999999'
+          contact: shippingAddress.phone
         },
         theme: {
           color: '#ff6fae'
         },
         modal: {
           ondismiss: function() {
-            if (checkoutBtn) {
-              checkoutBtn.disabled = false;
-              checkoutBtn.textContent = 'Proceed to Checkout';
-            }
+            checkoutBtn.disabled = false;
+            checkoutBtn.textContent = 'Proceed to Checkout';
           }
         }
       };
 
-      // Open Razorpay checkout
       const rzp = new Razorpay(options);
       rzp.on('payment.failed', function(response) {
         alert('Payment failed: ' + response.error.description);
-        if (checkoutBtn) {
-          checkoutBtn.disabled = false;
-          checkoutBtn.textContent = 'Proceed to Checkout';
-        }
+        checkoutBtn.disabled = false;
+        checkoutBtn.textContent = 'Proceed to Checkout';
       });
       rzp.open();
 
     } catch (error) {
       console.error('Payment error:', error);
       alert('Payment failed: ' + (error.message || 'Server error. Please try again.'));
-      if (checkoutBtn) {
-        checkoutBtn.disabled = false;
-        checkoutBtn.textContent = 'Proceed to Checkout';
-      }
+      checkoutBtn.disabled = false;
+      checkoutBtn.textContent = 'Proceed to Checkout';
     }
   }
 
@@ -305,9 +284,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  if (checkoutBtn) {
-    checkoutBtn.addEventListener('click', handleCheckout);
+  shippingForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    shippingAddress = {
+      address: document.getElementById('address').value,
+      city: document.getElementById('city').value,
+      postalCode: document.getElementById('postalCode').value,
+      country: document.getElementById('country').value,
+      phone: document.getElementById('phone').value,
+    };
+    shippingSection.classList.add('hidden');
+    paymentSection.classList.remove('hidden');
+    updateProgressBar(3);
+  });
+  
+  if (backToShippingBtn) {
+    backToShippingBtn.addEventListener('click', () => {
+      paymentSection.classList.add('hidden');
+      shippingSection.classList.remove('hidden');
+      updateProgressBar(2);
+    });
   }
+
+  checkoutBtn.addEventListener('click', handleCheckout);
 
   continueShoppingBtn.addEventListener('click', () => {
     confirmationModal.classList.add('hidden');
@@ -316,4 +315,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Initialize ---
   loadCart();
+  updateProgressBar(1);
 });
