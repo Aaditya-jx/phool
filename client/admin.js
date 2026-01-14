@@ -9,12 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const imageUrlInput = document.getElementById('image-url');
   const cancelEditBtn = document.getElementById('cancel-edit');
 
-  const API_BASE_URL = '/api'; // Using relative path
-
   // Fetch all products and display them
   async function fetchProducts() {
     try {
-      const products = await apiRequest(`${API_BASE_URL}/products`);
+      const products = await apiRequest(getAPIUrl(API_CONFIG.endpoints.products));
       productList.innerHTML = '';
       products.forEach(product => {
         const productEl = document.createElement('div');
@@ -51,7 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const formData = new FormData();
       formData.append('image', imageFile);
       try {
-        imageUrl = await apiRequest(`${API_BASE_URL}/upload`, {
+        // Note: The upload endpoint might not be in your API_CONFIG, so construct it manually if needed.
+        // Assuming you have an upload route like '/api/upload'
+        imageUrl = await apiRequest(getAPIUrl('/upload'), {
           method: 'POST',
           body: formData,
         });
@@ -61,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
     }
-
 
     const productData = {
       name: nameInput.value,
@@ -73,16 +72,16 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       if (id) {
         // Update existing product
-        await apiRequest(`${API_BASE_URL}/products/${id}`, {
+        await apiRequest(getAPIUrl(`${API_CONFIG.endpoints.products}/${id}`), {
           method: 'PUT',
-          body: JSON.stringify(productData),
+          body: productData,
         });
         alert('Product updated successfully!');
       } else {
         // Add new product
-        await apiRequest(`${API_BASE_URL}/products`, {
+        await apiRequest(getAPIUrl(API_CONFIG.endpoints.products), {
           method: 'POST',
-          body: JSON.stringify(productData),
+          body: productData,
         });
         alert('Product added successfully!');
       }
@@ -117,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.deleteProduct = async (id) => {
     if (confirm('Are you sure you want to delete this product?')) {
       try {
-        await apiRequest(`${API_BASE_URL}/products/${id}`, { method: 'DELETE' });
+        await apiRequest(getAPIUrl(`${API_CONFIG.endpoints.products}/${id}`), { method: 'DELETE' });
         alert('Product deleted successfully!');
         fetchProducts();
       } catch (error) {
