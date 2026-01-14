@@ -1,6 +1,6 @@
 // API Configuration
 const API_CONFIG = {
-  baseURL: '/api',
+  baseURL: 'https://phoolishlove.vercel.app/api',
   endpoints: {
     products: '/products',
     cart: '/cart',
