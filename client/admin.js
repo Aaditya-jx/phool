@@ -5,7 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const nameInput = document.getElementById('name');
   const descriptionInput = document.getElementById('description');
   const priceInput = document.getElementById('price');
-  const imageInput = document.getElementById('image');
+  const imageFileInput = document.getElementById('image-file');
+  const imageUrlInput = document.getElementById('image-url');
   const cancelEditBtn = document.getElementById('cancel-edit');
 
   const API_BASE_URL = '/api'; // Using relative path
@@ -23,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div>
             <h3>${product.name}</h3>
             <p>${product.description}</p>
-            <p>$${product.price}</p>
+            <p>${product.price}</p>
           </div>
           <div>
             <button onclick="editProduct('${product._id}', '${product.name}', '${product.description}', '${product.price}', '${product.image}')">Edit</button>
@@ -42,11 +43,31 @@ document.addEventListener('DOMContentLoaded', () => {
   productForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const id = productIdInput.value;
+    
+    let imageUrl = imageUrlInput.value;
+
+    const imageFile = imageFileInput.files[0];
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append('image', imageFile);
+      try {
+        imageUrl = await apiRequest(`${API_BASE_URL}/upload`, {
+          method: 'POST',
+          body: formData,
+        });
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        alert('Failed to upload image. Please try again.');
+        return;
+      }
+    }
+
+
     const productData = {
       name: nameInput.value,
       description: descriptionInput.value,
       price: parseFloat(priceInput.value),
-      image: imageInput.value,
+      image: imageUrl,
     };
 
     try {
@@ -87,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     nameInput.value = name;
     descriptionInput.value = description;
     priceInput.value = price;
-    imageInput.value = image;
+    imageUrlInput.value = image;
     cancelEditBtn.style.display = 'inline-block';
     window.scrollTo(0, 0);
   };

@@ -49,11 +49,12 @@
       </div>
       <div class="form-group">
         <label for="price">Price</label>
-        <input type="number" id="price" step="0.01" required>
+        <input type="number" id="price" required>
       </div>
       <div class="form-group">
-        <label for="image">Image URL</label>
-        <input type="text" id="image" required>
+        <label for="image">Image</label>
+        <input type="file" id="image-file">
+        <input type="hidden" id="image-url">
       </div>
       <button type="submit">Save Product</button>
       <button type="button" id="cancel-edit">Cancel Edit</button>

@@ -20,9 +20,7 @@ function getAPIUrl(endpoint) {
 // Helper function for API requests
 async function apiRequest(url, options = {}) {
   const defaultOptions = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: {},
   };
 
   // Add auth token if available
@@ -31,9 +29,12 @@ async function apiRequest(url, options = {}) {
     defaultOptions.headers['Authorization'] = `Bearer ${token}`;
   }
 
-  // Handle body serialization before creating config
   let body = options.body;
-  if (body && typeof body === 'object' && !(body instanceof FormData)) {
+  // Don't set Content-Type for FormData, browser does it
+  if (body instanceof FormData) {
+    //
+  } else if (body && typeof body === 'object') {
+    defaultOptions.headers['Content-Type'] = 'application/json';
     body = JSON.stringify(body);
   }
 
