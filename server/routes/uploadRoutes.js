@@ -35,7 +35,12 @@ const upload = multer({
 });
 
 router.post('/', upload.single('image'), (req, res) => {
-  res.send(`/${req.file.path.replace(/\/g, '/')}`);
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+  // Normalize path for URL
+  const filePath = `/${req.file.path.replace(/\\/g, '/')}`;
+  res.send(filePath);
 });
 
 module.exports = router;
