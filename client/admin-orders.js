@@ -24,15 +24,20 @@ function renderOrders(orders) {
   const tbody = document.getElementById('orders-list');
   tbody.innerHTML = '';
   if (!orders.length) {
-    tbody.innerHTML = '<tr><td colspan="7">No orders found</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8">No orders found</td></tr>';
     return;
   }
   orders.forEach(order => {
     const tr = document.createElement('tr');
+    const shippingAddress = order.shippingAddress
+      ? `${order.shippingAddress.address || ''}, ${order.shippingAddress.city || ''}, ${order.shippingAddress.postalCode || ''}, ${order.shippingAddress.country || ''}`
+      : 'N/A';
+
     tr.innerHTML = `
       <td>${order._id}</td>
       <td>${order.user?.name || 'N/A'}</td>
       <td>${order.shippingAddress?.phone || 'N/A'}</td>
+      <td>${shippingAddress}</td>
       <td><ul>${order.orderItems.map(i => `<li>${i.name} x${i.qty}</li>`).join('')}</ul></td>
       <td>₹${order.totalPrice}</td>
       <td><span class="status-${order.isDelivered ? 'delivered' : order.isPaid ? 'paid' : 'unpaid'}">${order.isDelivered ? 'Delivered' : order.isPaid ? 'Paid' : 'Unpaid'}</span></td>
