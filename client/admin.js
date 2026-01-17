@@ -42,46 +42,31 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const id = productIdInput.value;
     
-    let imageUrl = imageUrlInput.value;
-
+    const formData = new FormData();
+    formData.append('name', nameInput.value);
+    formData.append('description', descriptionInput.value);
+    formData.append('price', parseFloat(priceInput.value));
+    
     const imageFile = imageFileInput.files[0];
     if (imageFile) {
-      const formData = new FormData();
       formData.append('image', imageFile);
-      try {
-        // Note: The upload endpoint might not be in your API_CONFIG, so construct it manually if needed.
-        // Assuming you have an upload route like '/api/upload'
-        imageUrl = await apiRequest(getAPIUrl('/upload'), {
-          method: 'POST',
-          body: formData,
-        });
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        alert('Failed to upload image. Please try again.');
-        return;
-      }
+    } else if (imageUrlInput.value) {
+      formData.append('image', imageUrlInput.value);
     }
-
-    const productData = {
-      name: nameInput.value,
-      description: descriptionInput.value,
-      price: parseFloat(priceInput.value),
-      image: imageUrl,
-    };
 
     try {
       if (id) {
         // Update existing product
         await apiRequest(getAPIUrl(`${API_CONFIG.endpoints.products}/${id}`), {
           method: 'PUT',
-          body: productData,
+          body: formData,
         });
         alert('Product updated successfully!');
       } else {
         // Add new product
         await apiRequest(getAPIUrl(API_CONFIG.endpoints.products), {
           method: 'POST',
-          body: productData,
+          body: formData,
         });
         alert('Product added successfully!');
       }

@@ -31,40 +31,45 @@ async function apiRequest(url, options = {}) {
   }
 
   let body = options.body;
-  // Don't set Content-Type for FormData, browser does it
+  const headers = { ...defaultOptions.headers, ...options.headers };
+
   if (body instanceof FormData) {
-    //
+    // When using FormData, the browser automatically sets the Content-Type with the correct boundary.
+    // Manually setting it will cause issues.
+    delete headers['Content-Type'];
   } else if (body && typeof body === 'object') {
-    defaultOptions.headers['Content-Type'] = 'application/json';
+    headers['Content-Type'] = 'application/json';
     body = JSON.stringify(body);
   }
 
   const config = {
-    ...defaultOptions,
     ...options,
     body: body,
-    headers: {
-      ...defaultOptions.headers,
-      ...options.headers,
-    },
+    headers: headers,
   };
 
   try {
     const response = await fetch(url, config);
-    
+
     // Handle empty responses
     const contentType = response.headers.get('content-type');
     let data;
     if (contentType && contentType.includes('application/json')) {
       data = await response.json();
     } else {
-      data = await response.text();
+      // It might be a text response, like a URL from the upload
+      try {
+        data = await response.json();
+      } catch (e) {
+        data = await response.text();
+      }
     }
-    
+
     if (!response.ok) {
-      throw new Error(data.message || data || 'API request failed');
+      const errorMessage = (data && data.message) ? data.message : (typeof data === 'string' ? data : 'API request failed');
+      throw new Error(errorMessage);
     }
-    
+
     return data;
   } catch (error) {
     console.error('API Error:', error);
